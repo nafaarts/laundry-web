@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    @vite('resources/sass/app.scss')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+
+    <script src="https://unpkg.com/leaflet@1.9.1/dist/leaflet.js"
+        integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Laundry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="image-field"
+                        style="height: 200px; background-size: cover; background-position: center center">
+                    </div>
+                    <hr>
+                    <div class="datagrid">
+                        <div class="datagrid-item mb-2">
+                            <div class="datagrid-title">Nama</div>
+                            <div id="name-field" class="datagrid-content fw-bold"></div>
+                        </div>
+                        <div class="datagrid-item mb-2">
+                            <div class="datagrid-title">Owner</div>
+                            <div id="owner-field" class="datagrid-content fw-bold">-</div>
+                        </div>
+                        <div class="datagrid-item mb-2">
+                            <div class="datagrid-title">No. Izin</div>
+                            <div id="permission-field" class="datagrid-content fw-bold">-</div>
+                        </div>
+                        <div class="datagrid-item mb-2">
+                            <div class="datagrid-title">Alamat</div>
+                            <div id="address-field" class="datagrid-content fw-bold">-</div>
+                        </div>
+                        <div class="datagrid-item mb-2">
+                            <div class="datagrid-title">Nomor Telepon</div>
+                            <div id="phone-field" class="datagrid-content fw-bold">-</div>
+                        </div>
+                        <div class="datagrid-item mb-2">
+                            <div class="datagrid-title">Rating</div>
+                            <div id="phone-field" class="datagrid-content fw-bold d-flex" style="gap: 5px">
+                                <div class="rating">
+                                    <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+                                </div>
+                                .
+                                <span class="text-muted">6 ulasan</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="open-explore" class="btn btn-primary w-100">Lihat
+                        Selengkapnya</a>
+                    <button type="button" class="btn me-auto w-100" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+
+    <script>
+        var map, markers = {};
+        var myModal = new bootstrap.Modal(document.getElementById("exampleModal"), {});
+
+        var LeafIcon = L.Icon.extend({
+            options: {
+                shadowUrl: "{{ asset('icon_shadow.png') }}",
+                iconSize: [25, 50],
+                shadowSize: [50, 75],
+            }
+        });
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        async function showPosition(position) {
+            let coords = {
+                lat: position.coords.latitude,
+                long: position.coords.longitude
+            }
+
+            map = L.map('map').setView([coords.lat, coords.long], 18);
+
+            map.options.minZoom = 17;
+            map.options.maxZoom = 18;
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            await putLaundry()
+
+            var currentPosition = new LeafIcon({
+                iconUrl: "{{ asset('icon_you.svg') }}"
+            });
+
+            var marker = L.marker(new L.LatLng(coords.lat, coords.long), {
+                    icon: currentPosition,
+                    draggable: false
+                }).addTo(map)
+                .bindPopup('You are here!');
+
+            map.on('moveend', putLaundry);
+        }
+
+        getLocation()
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation. please enable it");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
+        }
+
+        async function getNearestLaundry(bounds) {
+            let {
+                swLat,
+                swLng,
+                neLat,
+                neLng
+            } = bounds
+            let request = await fetch(
+                `/api/get-nearest-area?swLat=${swLat}&swLng=${swLng}&neLat=${neLat}&neLng=${neLng}`)
+            let result = await request.json()
+            return result
+        }
+
+        async function putLaundry() {
+            let bounds = {
+                swLat: map.getBounds()._southWest.lat,
+                swLng: map.getBounds()._southWest.lng,
+                neLat: map.getBounds()._northEast.lat,
+                neLng: map.getBounds()._northEast.lng
+            }
+
+            var laundryIcon = new LeafIcon({
+                iconUrl: "{{ asset('icon_laundry.svg') }}"
+            });
+
+            let laundries = await getNearestLaundry(bounds);
+            laundries.forEach(function(item) {
+                let id = item.id
+                if (!markers[id]) {
+                    let marker = new L.marker(new L.LatLng(item.lat, item.long), {
+                        icon: laundryIcon,
+                        draggable: false
+                    }).addTo(map)
+
+                    marker.on('click', async () => {
+                        await getLaundry(id)
+                        myModal.show();
+                    })
+                    markers[id] = marker
+                }
+            })
+        }
+
+        async function getLaundry(id) {
+            let request = await fetch(
+                `/api/laundry/${id}`)
+            let result = await request.json()
+
+            document.getElementById('name-field').textContent = result.name
+            document.getElementById('owner-field').textContent = result.user.name
+            document.getElementById('permission-field').textContent = result.no_izin
+            document.getElementById('address-field').textContent = result.address
+            document.getElementById('phone-field').textContent = result.user.phone_number
+            document.getElementById('image-field').style.backgroundImage = `url(${result.image})`
+
+            document.getElementById('open-explore').setAttribute('href', "{{ route('open.explore') }}?id=" + id)
+        }
+    </script>
+</body>
+
+</html>
