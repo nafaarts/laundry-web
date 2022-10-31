@@ -1,4 +1,3 @@
+import "@tabler/core/src/js/tabler.js";
 
-import '@tabler/core/src/js/tabler.js';
-
-import './bootstrap';
+import "./bootstrap";

@@ -78,20 +78,24 @@
                                     <td>{{ $laundry->address }}</td>
                                     <td>{{ $laundry->services->count() }}</td>
                                     <td>
-                                        <a href="{{ route('laundry.show', $laundry) }}" class="btn btn-sm text-primary">
-                                            <i class="fas fa-fw fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('laundry.edit', $laundry) }}" class="btn btn-sm text-warning">
-                                            <i class="fas fa-fw fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('laundry.destroy', $laundry) }}" method="POST"
-                                            onsubmit="return confirm('are you sure?')" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm text-danger">
-                                                <i class="fas fa-fw fa-trash"></i>
-                                            </button>
-                                        </form>
+                                        <div class="d-flex">
+                                            <a href="{{ route('laundry.show', $laundry) }}"
+                                                class="btn btn-sm text-primary">
+                                                <i class="fas fa-fw fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('laundry.edit', $laundry) }}"
+                                                class="btn btn-sm text-warning">
+                                                <i class="fas fa-fw fa-edit"></i>
+                                            </a>
+                                            <form action="{{ route('laundry.destroy', $laundry) }}" method="POST"
+                                                onsubmit="return confirm('are you sure?')" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm text-danger">
+                                                    <i class="fas fa-fw fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

@@ -55,27 +55,27 @@
                 </div>
                 <div class="card-body">
                     <table>
-                        <tr class="fs-3">
+                        <tr class="fs-5">
                             <td class="pe-4 py-1">Name</td>
                             <td class="px-2">:</td>
                             <th>{{ $laundry->name }}</th>
                         </tr>
-                        <tr class="fs-3">
+                        <tr class="fs-5">
                             <td class="pe-4 py-1">Owner</td>
                             <td class="px-2">:</td>
                             <th>{{ $laundry->user->name }}</th>
                         </tr>
-                        <tr class="fs-3">
+                        <tr class="fs-5">
                             <td class="pe-4 py-1">Permission</td>
                             <td class="px-2">:</td>
                             <th>{{ $laundry->no_izin }}</th>
                         </tr>
-                        <tr class="fs-3">
+                        <tr class="fs-5">
                             <td class="pe-4 py-1">Address</td>
                             <td class="px-2">:</td>
                             <th>{{ $laundry->address }}</th>
                         </tr>
-                        <tr class="fs-3">
+                        <tr class="fs-5">
                             <td class="pe-4 py-1">Phone Number</td>
                             <td class="px-2">:</td>
                             <th>{{ $laundry->user->phone_number }}</th>
@@ -104,7 +104,7 @@
                                             width="100">
                                         <div class="w-100">
                                             <div class="d-flex justify-content-between">
-                                                <h3>{{ $service->name }}</h3>
+                                                <h5>{{ $service->name }}</h5>
                                                 <div>
                                                     <a href="{{ route('service.edit', [$service, 'laundry' => $laundry->id]) }}"
                                                         class="btn btn-sm text-warning"><i

@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
         integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    @vite('resources/sass/app.scss')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {{-- @vite('resources/sass/app.scss') --}}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.1/dist/leaflet.css"
         integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
 
@@ -25,8 +26,15 @@
         integrity="sha256-NDI0K41gVbWqfkkaHj15IzU7PtMoelkzyKp8TOaFQ3s=" crossorigin=""></script>
 </head>
 
-<body>
-    <div id="map"></div>
+<body class="position-relative">
+
+    <button id="my-position"
+        class="position-absolute bottom-0 end-0 m-3 bg-primary rounded-circle text-white fs-1 d-flex justify-content-center align-items-center border-0"
+        style="height: 40px; width: 40px; z-index: 2">
+        <i class="fas fa-fw fa-crosshairs"></i>
+    </button>
+
+    <div id="map" style="z-index: 1"></div>
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -78,21 +86,21 @@
                 <div class="modal-footer">
                     <a id="open-explore" class="btn btn-primary w-100">Lihat
                         Selengkapnya</a>
-                    <button type="button" class="btn me-auto w-100" data-bs-dismiss="modal">Close</button>
+                    {{-- <button type="button" class="btn me-auto w-100" data-bs-dismiss="modal">Close</button> --}}
                 </div>
             </div>
         </div>
     </div>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
 
-    <script>
+    <script defer>
         var map, markers = {};
+        var you, circle;
         var myModal = new bootstrap.Modal(document.getElementById("exampleModal"), {});
+        var myPosition = document.getElementById('my-position');
 
         var LeafIcon = L.Icon.extend({
             options: {
@@ -100,6 +108,10 @@
                 iconSize: [25, 50],
                 shadowSize: [50, 75],
             }
+        });
+
+        var currentPosition = new LeafIcon({
+            iconUrl: "{{ asset('icon_you.svg') }}"
         });
 
         function getLocation() {
@@ -121,17 +133,11 @@
             map.options.minZoom = 17;
             map.options.maxZoom = 18;
 
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
             await putLaundry()
 
-            var currentPosition = new LeafIcon({
-                iconUrl: "{{ asset('icon_you.svg') }}"
-            });
-
-            var marker = L.marker(new L.LatLng(coords.lat, coords.long), {
+            you = L.marker(new L.LatLng(coords.lat, coords.long), {
                     icon: currentPosition,
                     draggable: false
                 }).addTo(map)
@@ -141,6 +147,36 @@
         }
 
         getLocation()
+
+        function getMyPosition() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    lat = position.coords.latitude;
+                    long = position.coords.longitude;
+                    var accuracy = position.coords.accuracy;
+                    if (you) {
+                        map.removeLayer(you);
+                    }
+
+                    if (circle) {
+                        map.removeLayer(circle);
+                    }
+
+                    you = L.marker([lat, long], {
+                        icon: currentPosition,
+                    }).addTo(map);
+                    circle = L.circle([lat, long], {
+                        radius: accuracy
+                    });
+                    var featureGroup = L.featureGroup([you, circle]).addTo(map);
+                    map.fitBounds(featureGroup.getBounds());
+                }, showError);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        myPosition.addEventListener('click', getMyPosition);
 
         function showError(error) {
             switch (error.code) {

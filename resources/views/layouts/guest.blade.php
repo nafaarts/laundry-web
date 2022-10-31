@@ -8,21 +8,25 @@
     <meta name="description" content="">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    @vite('resources/sass/app.scss')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    {{-- @vite('resources/sass/app.scss') --}}
 </head>
 
 <body class="border-top-wide border-primary d-flex flex-column">
 
     <div class="page page-center">
-        <div class="container-tight py-4">
-            <div class="text-center mb-4">
-                <a href="{{ config('app.url') }}" class="navbar-brand navbar-brand-autodark">
-                    <img src="{{ url('img/logo.svg') }}" height="36" alt="" />
-                </a>
+        <div class="row">
+            <div class="container-tight py-4 col-12 col-md-4 mx-auto">
+                <div class="text-center mb-4">
+                    <a href="{{ config('app.url') }}" class="navbar-brand navbar-brand-autodark">
+                        <img src="{{ url('img/logo.svg') }}" height="36" alt="" />
+                    </a>
+                </div>
+
+                @yield('content')
             </div>
-
-            @yield('content')
-
         </div>
     </div>
 
