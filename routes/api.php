@@ -64,11 +64,12 @@ Route::group(['middleware' => ['auth:api']], function () {
         $laundry = Laundry::select(
             "*",
             DB::raw("6371 * acos(cos(radians(" . $lat . "))
-            * cos(radians(laundries.lat))
-            * cos(radians(laundries.long) - radians(" . $lng . "))
+            * cos(radians(lat))
+            * cos(radians(long) - radians(" . $lng . "))
             + sin(radians(" . $lat . "))
-            * sin(radians(laundries.lat))) AS distance")
-        )->orderBy('distance', 'ASC')->get();
+            * sin(radians(lat))) AS distance")
+        )
+            ->groupBy("id")->orderBy('distance', 'ASC')->get();
 
         $laundry = $laundry->map(function ($item) {
             return [
