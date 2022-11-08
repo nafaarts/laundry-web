@@ -76,7 +76,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
             return [
                 ...collect($item)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']),
-                'distance' => (float) number_format($distance, 2),
+                'distance' => $distance,
                 'image' => asset('img/laundry') . '/' . $item->image,
                 'has_pickup' => Arr::random([true, false]),
                 'rate' => rand(1, 5),
