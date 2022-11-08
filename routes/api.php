@@ -66,18 +66,16 @@ Route::get('/laundry', function () {
     $laundry = Laundry::all();
 
     $laundry = $laundry->map(function ($item) {
-        $distance = (float) number_format(6371 *
-            acos(
-                cos(deg2rad((float) request('lat')))
-                    * cos(deg2rad((float) $item->lat))
-                    * cos(deg2rad((float) $item->long) - deg2rad((float) request('lng')))
-                    + sin(deg2rad((float) request('lat')))
-                    * sin(deg2rad((float) $item->lat))
-            ), 2);
-
         return [
             ...collect($item)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']),
-            'distance' => $distance,
+            'distance' => (float) number_format(6371 *
+                acos(
+                    cos(deg2rad((float) request('lat')))
+                        * cos(deg2rad((float) $item->lat))
+                        * cos(deg2rad((float) $item->long) - deg2rad((float) request('lng')))
+                        + sin(deg2rad((float) request('lat')))
+                        * sin(deg2rad((float) $item->lat))
+                ), 2),
             'image' => asset('img/laundry') . '/' . $item->image,
             'has_pickup' => Arr::random([true, false]),
             'rate' => rand(1, 5),
