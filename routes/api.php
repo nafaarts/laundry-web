@@ -65,13 +65,13 @@ Route::get('/laundry', function () {
 
     $laundry = Laundry::all();
 
-    $laundry = $laundry->map(function ($item) use ($lat, $lng) {
+    $laundry = $laundry->map(function ($item) {
         $distance = (float) number_format(6371 *
             acos(
-                cos(deg2rad($lat))
+                cos(deg2rad(request('lat')))
                     * cos(deg2rad($item->lat))
-                    * cos(deg2rad($item->long) - deg2rad($lng))
-                    + sin(deg2rad($lat))
+                    * cos(deg2rad($item->long) - deg2rad(request('lng')))
+                    + sin(deg2rad(request('lat')))
                     * sin(deg2rad($item->lat))
             ), 2);
 
