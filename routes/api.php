@@ -61,20 +61,22 @@ Route::group(['middleware' => ['auth:api']], function () {
         $lat = request('lat') or abort(404);
         $lng = request('lng') or abort(404);
 
-        $laundry = Laundry::select(
-            "*",
-            DB::raw("6371 * acos(cos(radians(" . $lat . "))
-            * cos(radians(lat))
-            * cos(radians(long) - radians(" . $lng . "))
-            + sin(radians(" . $lat . "))
-            * sin(radians(lat))) AS distance")
-        )
-            ->groupBy("id")->orderBy('distance', 'ASC')->get();
+        $laundry = Laundry::orderBy('distance', 'ASC')->get();
 
-        $laundry = $laundry->map(function ($item) {
+        $laundry = $laundry->map(function ($item) use ($lat, $lng) {
+
+            $distance = (float) number_format(6371 *
+                acos(
+                    cos(deg2rad($lat))
+                        * cos(deg2rad($item->lat))
+                        * cos(deg2rad($item->long) - deg2rad($lng))
+                        + sin(deg2rad($lat))
+                        * sin(deg2rad($item->lat))
+                ), 2);
+
             return [
                 ...collect($item)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']),
-                'distance' => number_format($item->distance, 2),
+                'distance' => (float) number_format($distance, 2),
                 'image' => asset('img/laundry') . '/' . $item->image,
                 'has_pickup' => Arr::random([true, false]),
                 'rate' => rand(1, 5),
