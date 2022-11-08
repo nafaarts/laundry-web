@@ -128,6 +128,8 @@
                 long: position.coords.longitude
             }
 
+            console.log(coords);
+
             map = L.map('map').setView([coords.lat, coords.long], 18);
 
             map.options.minZoom = 17;
