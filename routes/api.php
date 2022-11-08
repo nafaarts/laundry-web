@@ -28,80 +28,80 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 });
 
 Route::group(['middleware' => ['auth:api']], function () {
-});
+    Route::get('/laundry/{id}', function ($id) {
 
-Route::get('/laundry/{id}', function ($id) {
+        $laundry = Laundry::with('services', 'user')->findOrFail($id);
 
-    $laundry = Laundry::with('services', 'user')->findOrFail($id);
+        $lat = request('lat');
+        $lng = request('lng');
 
-    $lat = request('lat');
-    $lng = request('lng');
-
-    if ($lat && $lng) {
-        $laundry->distance = (float) number_format(6371 *
-            acos(
-                cos(deg2rad($lat))
-                    * cos(deg2rad($laundry->lat))
-                    * cos(deg2rad($laundry->long) - deg2rad($lng))
-                    + sin(deg2rad($lat))
-                    * sin(deg2rad($laundry->lat))
-            ), 2);
-    }
-
-    $laundry->image = asset('img/laundry') . '/' . $laundry->image;
-    $laundry->has_pickup = Arr::random([true, false]);
-    $laundry->rate = rand(1, 5);
-    $laundry->services = $laundry->services->map(function ($item) {
-        $item->icon = asset('img/laundry') . '/' . $item->icon;
-        return $item;
-    });
-
-    return collect($laundry)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']);
-});
-
-Route::get('/laundry', function () {
-    $lat = request('lat') or abort(404);
-    $lng = request('lng') or abort(404);
-
-    $laundry = Laundry::all();
-
-    $laundry = $laundry->map(function ($item) {
-        return [
-            ...collect($item)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']),
-            'distance' => (float) number_format(6371 *
+        if ($lat && $lng) {
+            $laundry->distance = (float) number_format(6371 *
                 acos(
-                    cos(deg2rad((float) request('lat')))
-                        * cos(deg2rad((float) $item->lat))
-                        * cos(deg2rad((float) $item->long) - deg2rad((float) request('lng')))
-                        + sin(deg2rad((float) request('lat')))
-                        * sin(deg2rad((float) $item->lat))
-                ), 2),
-            'image' => asset('img/laundry') . '/' . $item->image,
-            'has_pickup' => Arr::random([true, false]),
-            'rate' => rand(1, 5),
-            'cheapest_price' => $item->services()->orderBy('price', 'ASC')->first()->price
-        ];
+                    cos(deg2rad($lat))
+                        * cos(deg2rad($laundry->lat))
+                        * cos(deg2rad($laundry->long) - deg2rad($lng))
+                        + sin(deg2rad($lat))
+                        * sin(deg2rad($laundry->lat))
+                ), 2);
+        }
+
+        $laundry->image = asset('img/laundry') . '/' . $laundry->image;
+        $laundry->has_pickup = Arr::random([true, false]);
+        $laundry->rate = rand(1, 5);
+        $laundry->services = $laundry->services->map(function ($item) {
+            $item->icon = asset('img/laundry') . '/' . $item->icon;
+            return $item;
+        });
+
+        return collect($laundry)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']);
     });
 
-    $laundry = collect($laundry);
-    $filter = request('filter');
-    switch ($filter) {
-        case 'cheapest':
-            $result = $laundry->sortBy('cheapest_price')->values()->all();
-            break;
-        case 'top-rated':
-            $result = $laundry->where('rate', '>=', 4)->sortByDesc('rate')->values()->all();
-            break;
-        case 'pickup':
-            # code...
-            $result = $laundry->where('has_pickup', true);
-            break;
-        default:
-            $result = $laundry->sortBy('distance')->values()->all();
-            break;
-    }
+    Route::get('/laundry', function () {
+        $lat = request('lat') or abort(404);
+        $lng = request('lng') or abort(404);
 
-    return PaginationHelper::paginate(collect($result), 10)->withQueryString();
+        $laundry = Laundry::all();
+
+        $laundry = $laundry->map(function ($item) use ($lat, $lng) {
+            $distance = (float) number_format(6371 *
+                acos(
+                    cos(deg2rad($lat))
+                        * cos(deg2rad($item->lat))
+                        * cos(deg2rad($item->long) - deg2rad($lng))
+                        + sin(deg2rad($lat))
+                        * sin(deg2rad($item->lat))
+                ), 2);
+
+            return [
+                ...collect($item)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']),
+                'distance' => $distance,
+                'image' => asset('img/laundry') . '/' . $item->image,
+                'has_pickup' => Arr::random([true, false]),
+                'rate' => rand(1, 5),
+                'cheapest_price' => $item->services()->orderBy('price', 'ASC')->first()->price
+            ];
+        });
+
+        $laundry = collect($laundry);
+        $filter = request('filter');
+        switch ($filter) {
+            case 'cheapest':
+                $result = $laundry->sortBy('cheapest_price')->values()->all();
+                break;
+            case 'top-rated':
+                $result = $laundry->where('rate', '>=', 4)->sortByDesc('rate')->values()->all();
+                break;
+            case 'pickup':
+                $result = $laundry->where('has_pickup', true);
+                break;
+            default:
+                $result = $laundry->sortBy('distance')->values()->all();
+                break;
+        }
+
+        return PaginationHelper::paginate(collect($result), 10)->withQueryString();
+    });
 });
 
 Route::get('/get-nearest-area', function () {
