@@ -68,8 +68,7 @@ Route::group(['middleware' => ['auth:api']], function () {
             * cos(radians(laundries.long) - radians(" . $lng . "))
             + sin(radians(" . $lat . "))
             * sin(radians(laundries.lat))) AS distance")
-        )
-            ->groupBy("laundries.id")->orderBy('distance', 'ASC')->get();
+        )->orderBy('distance', 'ASC')->get();
 
         $laundry = $laundry->map(function ($item) {
             return [
