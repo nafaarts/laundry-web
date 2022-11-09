@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // User::factory(1)->create([
-        //     'name' => "Naufal",
-        //     'email' => "nfalldh@gmail.com",
-        //     'phone_number' => "085244118541",
-        //     'role' => "admin"
-        // ]);
+        User::factory(1)->create([
+            'name' => "Naufal",
+            'email' => "nfalldh@gmail.com",
+            'phone_number' => "085244118541",
+            'role' => "admin"
+        ]);
 
         $data = '[
             {"lat": "5.5275731366585585","lng": "95.32873660326004"},
@@ -137,33 +137,22 @@ class DatabaseSeeder extends Seeder
 
         $coords = json_decode($data, true);
 
-        $laundry = Laundry::all();
-        $index = 0;
-        $laundry->each(function ($item) use ($coords, $index) {
-            $item->update([
-                'lat' => number_format((float) $coords[$index]['lat'], 15),
-                'long' => number_format((float) $coords[$index]['lng'], 15),
-            ]);
-            $index++;
-        });
-
-
-        // foreach ($coords as $item) {
-        // User::factory(1)->create([
-        //     'role' => 'laundry'
-        // ])->each(function ($user) use ($item) {
-        //     Laundry::factory(1)->create([
-        //         'user_id' => $user->id,
-        //         'lat' => (float) $item['lat'],
-        //         'long' => (float) $item['lng'],
-        //     ])->each(function ($laundry) {
-        //         for ($i = 0; $i < 3; $i++) {
-        //             LaundryService::factory(1)->create([
-        //                 'laundry_id' => $laundry->id,
-        //             ]);
-        //         }
-        //     });
-        // });
-        // }
+        foreach ($coords as $item) {
+            User::factory(1)->create([
+                'role' => 'laundry'
+            ])->each(function ($user) use ($item) {
+                Laundry::factory(1)->create([
+                    'user_id' => $user->id,
+                    'lat' => (float) $item['lat'],
+                    'long' => (float) $item['lng'],
+                ])->each(function ($laundry) {
+                    for ($i = 0; $i < 3; $i++) {
+                        LaundryService::factory(1)->create([
+                            'laundry_id' => $laundry->id,
+                        ]);
+                    }
+                });
+            });
+        }
     }
 }
