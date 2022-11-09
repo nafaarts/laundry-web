@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('address');
             $table->string('district');
             $table->string('city');
-            $table->float('lat')->nullable();
-            $table->float('long')->nullable();
+            $table->float('lat', 10, 8)->nullable();
+            $table->float('long', 11, 8)->nullable();
             $table->string('image');
             $table->timestamps();
         });
