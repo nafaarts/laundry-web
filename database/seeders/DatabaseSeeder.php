@@ -137,22 +137,33 @@ class DatabaseSeeder extends Seeder
 
         $coords = json_decode($data, true);
 
-        foreach ($coords as $item) {
-            User::factory(1)->create([
-                'role' => 'laundry'
-            ])->each(function ($user) use ($item) {
-                Laundry::factory(1)->create([
-                    'user_id' => $user->id,
-                    'lat' => (float) $item['lat'],
-                    'long' => (float) $item['lng'],
-                ])->each(function ($laundry) {
-                    for ($i = 0; $i < 3; $i++) {
-                        LaundryService::factory(1)->create([
-                            'laundry_id' => $laundry->id,
-                        ]);
-                    }
-                });
-            });
-        }
+        $laundry = Laundry::all();
+        $index = 0;
+        $laundry->each(function ($item) use ($coords, $index) {
+            $item->update([
+                'lat' => number_format((float) $coords[$index]['lat'], 15),
+                'long' => number_format((float) $coords[$index]['lng'], 15),
+            ]);
+            $index++;
+        });
+
+
+        // foreach ($coords as $item) {
+        // User::factory(1)->create([
+        //     'role' => 'laundry'
+        // ])->each(function ($user) use ($item) {
+        //     Laundry::factory(1)->create([
+        //         'user_id' => $user->id,
+        //         'lat' => (float) $item['lat'],
+        //         'long' => (float) $item['lng'],
+        //     ])->each(function ($laundry) {
+        //         for ($i = 0; $i < 3; $i++) {
+        //             LaundryService::factory(1)->create([
+        //                 'laundry_id' => $laundry->id,
+        //             ]);
+        //         }
+        //     });
+        // });
+        // }
     }
 }
