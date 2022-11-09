@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(1)->create([
-            'name' => "Naufal",
-            'email' => "nfalldh@gmail.com",
-            'phone_number' => "085244118541",
-            'role' => "admin"
-        ]);
+        // User::factory(1)->create([
+        //     'name' => "Naufal",
+        //     'email' => "nfalldh@gmail.com",
+        //     'phone_number' => "085244118541",
+        //     'role' => "admin"
+        // ]);
 
         $data = '[
             {"lat": "5.5275731366585585","lng": "95.32873660326004"},
