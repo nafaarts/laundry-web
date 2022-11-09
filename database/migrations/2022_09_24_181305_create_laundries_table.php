@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('no_izin');
             $table->string('address');
+            $table->string('district');
+            $table->string('city');
             $table->float('lat')->nullable();
             $table->float('long')->nullable();
             $table->string('image');

@@ -14,6 +14,8 @@ class Laundry extends Model
         'name',
         'no_izin',
         'address',
+        'district',
+        'city',
         'lat',
         'long',
         'image'

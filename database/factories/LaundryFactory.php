@@ -21,6 +21,8 @@ class LaundryFactory extends Factory
             'name' => fake()->sentence(3),
             'no_izin' => 'no-' . fake()->numberBetween(1234123, 12309823),
             'address' => fake()->address(),
+            'district' => fake()->state(),
+            'city' => fake()->city(),
             'lat' => null,
             'long' => null,
             'image' =>  fake()->image(public_path('img/laundry/'), 700, 400, false),
