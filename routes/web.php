@@ -166,13 +166,15 @@ Route::get('/update-seed', function () {
     $laundry = Laundry::all();
     $index = 0;
     foreach ($laundry as $value) {
-        $then = $value->update([
-            'lat' => number_format((float) $coords[$index]['lat'], 15),
-            'long' => number_format((float) $coords[$index]['lng'], 15),
-        ]);
-        $index++;
+        // $then = $value->update([
+        //     'lat' => number_format((float) $coords[$index]['lat'], 15),
+        //     'long' => number_format((float) $coords[$index]['lng'], 15),
+        // ]);
         echo $index . ' -> ';
-        echo print_r($then);
+        // echo print_r($then);
+        echo number_format((float) $coords[$index]['lat'], 15) . ' | ';
+        echo number_format((float) $coords[$index]['lng'], 15);
         echo "<br>";
+        $index++;
     }
 });
