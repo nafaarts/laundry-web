@@ -165,8 +165,8 @@ Route::get('/update-seed', function () {
 
     $laundry = Laundry::all();
     $index = 0;
-    $laundry->each(function ($item) use ($coords, $index) {
-        $then = $item->update([
+    foreach ($laundry as $value) {
+        $then = $value->update([
             'lat' => number_format((float) $coords[$index]['lat'], 15),
             'long' => number_format((float) $coords[$index]['lng'], 15),
         ]);
@@ -174,5 +174,5 @@ Route::get('/update-seed', function () {
         echo $index . ' -> ';
         echo print_r($then);
         echo "<br>";
-    });
+    }
 });
