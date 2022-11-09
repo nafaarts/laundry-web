@@ -94,7 +94,9 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth('api')->user());
+        $user = auth('api')->user();
+        $user->profile_picture =  asset('img/user') . '/' . $user->profile_picture;
+        return response()->json($user);
     }
 
     /**
