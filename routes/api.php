@@ -93,7 +93,7 @@ Route::group(['middleware' => ['auth:api']], function () {
                 $result = $laundry->where('rate', '>=', 4)->sortByDesc('rate')->values()->all();
                 break;
             case 'pickup':
-                $result = $laundry->where('has_pickup', true);
+                $result = $laundry->where('has_pickup', true)->values()->all();
                 break;
             default:
                 $result = $laundry->sortBy('distance')->values()->all();
