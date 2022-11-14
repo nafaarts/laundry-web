@@ -3,42 +3,51 @@
 namespace App\Helpers;
 
 use Illuminate\Container\Container;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Request;
 
 class PaginationHelper
 {
-    public static function paginate(Collection $results, $showPerPage)
+    /**
+     * @var \Illuminate\Http\Request
+     */
+    protected $request;
+
+    /**
+     * Creates a new array paginator instance.
+     *
+     * @param \Illuminate\Http\Request $request
+     */
+    public function __construct(HttpRequest $request)
     {
-        $pageNumber = Paginator::resolveCurrentPage('page');
-
-        $totalPageNumber = $results->count();
-
-        return self::paginator($results->forPage($pageNumber, $showPerPage), $totalPageNumber, $showPerPage, $pageNumber, [
-            'path' => Paginator::resolveCurrentPath(),
-            'pageName' => 'page',
-        ]);
+        $this->request = $request;
     }
 
     /**
-     * Create a new length-aware paginator instance.
+     * Paginates an array of items.
      *
-     * @param  \Illuminate\Support\Collection  $items
-     * @param  int  $total
-     * @param  int  $perPage
-     * @param  int  $currentPage
-     * @param  array  $options
+     * @param mixed   $items
+     * @param integer $length
+     *
      * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    protected static function paginator($items, $total, $perPage, $currentPage, $options)
+    public function paginate($items, $length = 10)
     {
-        return Container::getInstance()->makeWith(LengthAwarePaginator::class, compact(
-            'items',
-            'total',
-            'perPage',
-            'currentPage',
-            'options'
-        ));
+        if ($items instanceof Collection) {
+            $items = $items->all();
+        }
+
+        $page = $this->request->get('page') ?: 1;
+
+        $offset = ($page - 1) * $length;
+
+        $paginator = new LengthAwarePaginator(array_slice($items, $offset, $length), count($items), $length);
+
+        $paginator->setPath(url($this->request->path()));
+
+        return $paginator;
     }
 }

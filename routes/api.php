@@ -99,8 +99,8 @@ Route::group(['middleware' => ['auth:api']], function () {
                 $result = $laundry->sortBy('distance')->values()->all();
                 break;
         }
-
-        return PaginationHelper::paginate(collect($result), 10)->withQueryString();
+        $pagination = new PaginationHelper(request());
+        return $pagination->paginate(collect($result), 10)->withQueryString();
     });
 });
 
