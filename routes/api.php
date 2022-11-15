@@ -54,6 +54,8 @@ Route::group(['middleware' => ['auth:api']], function () {
             return $item;
         });
 
+        $laundry->user->image = asset('img/user') . '/' . $laundry->user->image;
+
         return collect($laundry)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']);
     });
 
