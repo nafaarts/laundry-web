@@ -50,7 +50,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         $laundry->has_pickup = Arr::random([true, false]);
         $laundry->rate = rand(1, 5);
         $laundry->services = $laundry->services->map(function ($item) {
-            $item->icon = asset('img/laundry') . '/' . $item->icon;
+            $item->icon = asset('img/icon') . '/' . $item->icon;
             return $item;
         });
 
