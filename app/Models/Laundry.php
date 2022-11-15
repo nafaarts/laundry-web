@@ -21,6 +21,17 @@ class Laundry extends Model
         'image'
     ];
 
+    function scopeFilter($query)
+    {
+        if (request()->has('search') && request('search') != null) {
+            $query->where('name', 'LIKE', '%' . request('search') . '%')
+                ->orWhere('no_izin', 'LIKE', '%' . request('search') . '%')
+                ->orWhere('city', 'LIKE', '%' . request('search') . '%')
+                ->orWhere('district', 'LIKE', '%' . request('search') . '%')
+                ->orWhere('address', 'LIKE', '%' . request('search') . '%');
+        }
+    }
+
     function user()
     {
         return $this->belongsTo(User::class);
