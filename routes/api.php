@@ -61,7 +61,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         $lat = request('lat') or abort(404);
         $lng = request('lng') or abort(404);
 
-        $laundry = Laundry::all();
+        $laundry = Laundry::filter()->get();
 
         $laundry = $laundry->map(function ($item) use ($lat, $lng) {
             $distance = (float) number_format(6371 *
