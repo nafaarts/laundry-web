@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\PaginationHelper;
+use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AuthController;
 use App\Models\Laundry;
 use Illuminate\Http\Request;
@@ -29,9 +30,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/laundry/{id}', function ($id) {
-
         $laundry = Laundry::with('services', 'user')->findOrFail($id);
-
         $lat = request('lat');
         $lng = request('lng');
 
@@ -58,7 +57,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
         return collect($laundry)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']);
     });
-
     Route::get('/laundry', function () {
         $lat = request('lat') or abort(404);
         $lng = request('lng') or abort(404);
@@ -104,6 +102,9 @@ Route::group(['middleware' => ['auth:api']], function () {
         $pagination = new PaginationHelper(request());
         return $pagination->paginate(collect($result), 10)->withQueryString();
     });
+
+    // alamat
+    Route::resource('/address', AddressController::class)->only(['index', 'store', 'destroy']);
 });
 
 Route::get('/get-nearest-area', function () {

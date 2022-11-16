@@ -29,15 +29,10 @@ Auth::routes([
 Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
-
     Route::resource('users', \App\Http\Controllers\UserController::class)->except('show');
-
     Route::resource('laundry', \App\Http\Controllers\LaundryController::class);
-
     Route::resource('service', \App\Http\Controllers\LaundryServiceController::class)->except('index', 'show');
-
     Route::resource('transactions', \App\Http\Controllers\OrderController::class)->names('orders');
-
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
