@@ -47,7 +47,6 @@ Route::group(['middleware' => ['auth:api']], function () {
         }
 
         $laundry->image = asset('img/laundry') . '/' . $laundry->image;
-        $laundry->has_pickup = Arr::random([true, false]);
         $laundry->rate = rand(1, 5);
         $laundry->services = $laundry->services->map(function ($item) {
             $item->icon = asset('img/icon') . '/' . $item->icon;
@@ -78,7 +77,7 @@ Route::group(['middleware' => ['auth:api']], function () {
                 ...collect($item)->except(['user_id', 'lat', 'long', 'created_at', 'updated_at']),
                 'distance' => $distance,
                 'image' => asset('img/laundry') . '/' . $item->image,
-                'has_pickup' => Arr::random([true, false]),
+                'has_pickup' => $item->has_pickup,
                 'rate' => rand(1, 5),
                 'cheapest_price' => $item->services()->orderBy('price', 'ASC')->first()->price
             ];
