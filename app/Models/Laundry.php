@@ -18,7 +18,8 @@ class Laundry extends Model
         'city',
         'lat',
         'long',
-        'image'
+        'image',
+        'has_pickup'
     ];
 
     function scopeFilter($query)
@@ -41,5 +42,10 @@ class Laundry extends Model
     function reviews()
     {
         return $this->hasMany(Reviews::class);
+    }
+
+    function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

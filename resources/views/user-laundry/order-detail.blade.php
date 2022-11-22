@@ -10,9 +10,14 @@
                     </h2>
                 </div>
                 <div class="col-auto ms-auto">
-                    <a href="{{ route('orders.index') }}" class="btn d-sm-inline-block">
+                    <a href="{{ route('laundry-orders') }}" class="btn d-sm-inline-block">
                         <i class="fas fa-fw fa-arrow-left"></i>
                         Go Back
+                    </a>
+                    <a href="{{ route('laundry-orders') }}" class="btn btn-sm btn-primary d-sm-inline-block"
+                        data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <i class="fas fa-fw fa-edit"></i>
+                        Update Status
                     </a>
                 </div>
             </div>
@@ -48,28 +53,28 @@
                         <tr>
                             <td>{{ __('Laundry') }}</td>
                             <td class="py-2 px-4">:</td>
-                            <td><b>{{ $transaction->laundry->name }}</b></td>
+                            <td><b>{{ $order->laundry->name }}</b></td>
                         </tr>
                         <tr>
                             <td>{{ __('Costumer') }}</td>
                             <td class="py-2 px-4">:</td>
-                            <td>{{ $transaction->user->name }}</td>
+                            <td>{{ $order->user->name }}</td>
                         </tr>
                         <tr>
                             <td>{{ __('Weight') }}</td>
                             <td class="py-2 px-4">:</td>
-                            <td>{{ $transaction->getTotalWeight() }} KG</td>
+                            <td>{{ $order->getTotalWeight() }} KG</td>
                         </tr>
                         <tr>
                             <td>{{ __('Price') }}</td>
                             <td class="py-2 px-4">:</td>
-                            <td>Rp {{ number_format($transaction->getTotalPrice(), 0, ',', '.') }}</td>
+                            <td>Rp {{ number_format($order->getTotalPrice(), 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             <td>{{ __('Picked Up') }}</td>
                             <td class="py-2 px-4">:</td>
                             <td>
-                                @if ($transaction->is_pickedup)
+                                @if ($order->is_pickedup)
                                     <span class="badge bg-success"><i class="fas fa-fw fa-check"></i></span>
                                 @else
                                     <span class="badge bg-warning"><i class="fas fa-fw fa-times"></i></span>
@@ -80,7 +85,7 @@
                             <td>{{ __('Paid') }}</td>
                             <td class="py-2 px-4">:</td>
                             <td>
-                                @if ($transaction->is_paid)
+                                @if ($order->is_paid)
                                     <span class="badge bg-success"><i class="fas fa-fw fa-check"></i></span>
                                 @else
                                     <span class="badge bg-warning"><i class="fas fa-fw fa-times"></i></span>
@@ -90,12 +95,12 @@
                         <tr>
                             <td>{{ __('Status') }}</td>
                             <td class="py-2 px-4">:</td>
-                            <td class="text-uppercase">{{ $transaction->status }}</td>
+                            <td class="text-uppercase">{{ $order->status }}</td>
                         </tr>
                         <tr>
                             <td>{{ __('Date') }}</td>
                             <td class="py-2 px-4">:</td>
-                            <td class="text-uppercase">{{ $transaction->created_at }}</td>
+                            <td class="text-uppercase">{{ $order->created_at }}</td>
                         </tr>
                     </table>
                 </div>
@@ -117,7 +122,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($transaction->details as $detail)
+                                @foreach ($order->details as $detail)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td><b>{{ $detail->service->name }}</b></td>
@@ -129,6 +134,54 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('laundry-orders.update-status', $order) }}" method="GET" class="mb-3"
+                        id="update-status">
+                        <input type="hidden" name="type" value="STATUS">
+                        <select class="form-select" aria-label="Change Status" name="status">
+                            @foreach (['PESANAN_DIBUAT', 'DITERIMA', 'DICUCI', 'SETRIKA', 'SELESAI', 'DIBATALKAN'] as $item)
+                                <option @selected($item === $order->status)>{{ $item }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                    <div class="d-flex" style="gap: 10px">
+                        <a href="{{ route('laundry-orders.update-status', [$order, 'type' => 'PAID', 'status' => !$order->is_paid]) }}"
+                            @class([
+                                'w-100 btn btn-sm d-sm-inline-block text-white',
+                                'bg-success' => $order->is_paid,
+                                'bg-secondary' => !$order->is_paid,
+                            ])>
+                            <i class="fas fa-fw fa-check"></i>
+                            Konfirmasi Pembayaran
+                        </a>
+                        <a href="{{ route('laundry-orders.update-status', [$order, 'type' => 'PICKEDUP', 'status' => !$order->is_pickup]) }}"
+                            @class([
+                                'w-100 btn btn-sm d-sm-inline-block text-white',
+                                'bg-success' => $order->is_pickedup,
+                                'bg-secondary' => !$order->is_pickedup,
+                            ])>
+                            <i class="fas fa-fw fa-check"></i>
+                            Konfirmasi Pengambilan
+                        </a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button onclick="document.getElementById('update-status').submit()" class="btn btn-primary">Save
+                        changes</button>
                 </div>
             </div>
         </div>

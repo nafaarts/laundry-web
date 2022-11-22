@@ -17,16 +17,13 @@
         <div class="page-header d-print-none">
             <div class="row align-items-center">
                 <div class="col">
-                    <!-- Page pre-title -->
-                    <div class="page-pretitle">
-                        {{ config('app.name') }}
-                    </div>
                     <h2 class="page-title">
                         {{ __('Edit Laundry') }}
                     </h2>
                 </div>
             </div>
         </div>
+        <hr>
     </div>
     <div class="page-body">
         <div class="container-xl">
@@ -116,6 +113,14 @@
                         @error('long')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" @checked($laundry->has_pickup) value="1"
+                            name="has_pickup" id="has_pickup">
+                        <label class="form-check-label" for="has_pickup">
+                            Has Pickup
+                        </label>
                     </div>
 
                     <div id="map"></div>

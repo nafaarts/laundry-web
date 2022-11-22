@@ -3,7 +3,6 @@
 @section('content')
     <form class="card p-2" action="{{ route('login') }}" method="post" autocomplete="off">
         @csrf
-
         <div class="card-body">
             <h5 class="card-title text-center mb-4">{{ __('Login to your account') }}</h5>
             <div class="mb-3">
@@ -43,10 +42,9 @@
             </div>
         </div>
     </form>
-
-    @if (Route::has('register'))
+    {{-- @if (Route::has('register'))
         <div class="text-center text-muted mt-3">
             {{ __("Don't have account yet?") }} <a href="{{ route('register') }}" tabindex="-1">{{ __('Sign up') }}</a>
         </div>
-    @endif
+    @endif --}}
 @endsection

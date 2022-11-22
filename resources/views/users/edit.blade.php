@@ -5,15 +5,13 @@
         <div class="page-header d-print-none">
             <div class="row align-items-center">
                 <div class="col">
-                    <div class="page-pretitle">
-                        {{ config('app.name') }}
-                    </div>
                     <h2 class="page-title">
                         {{ __('Edit User') }}
                     </h2>
                 </div>
             </div>
         </div>
+        <hr>
     </div>
     <div class="page-body">
         <div class="container-xl">

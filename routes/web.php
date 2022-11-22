@@ -1,19 +1,9 @@
 <?php
 
+use App\Http\Controllers\LaundryOrderController;
 use App\Models\Laundry;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', function () {
     return redirect('/dashboard');
@@ -25,8 +15,8 @@ Auth::routes([
     'register' => false,
 ]);
 
-
 Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/detail', [App\Http\Controllers\HomeController::class, 'detail'])->name('detail');
 
 Route::middleware('auth')->group(function () {
     Route::resource('users', \App\Http\Controllers\UserController::class)->except('show');
@@ -35,6 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('transactions', \App\Http\Controllers\OrderController::class)->names('orders');
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('orders', [LaundryOrderController::class, 'index'])->name('laundry-orders');
+    Route::get('orders/{order}/detail', [LaundryOrderController::class, 'detail'])->name('laundry-orders.detail');
+    Route::get('orders/{order}/status', [LaundryOrderController::class, 'updateStatus'])->name('laundry-orders.update-status');
 });
 
 Route::get('explore', function () {

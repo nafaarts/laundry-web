@@ -14,19 +14,17 @@
     {{-- @vite('resources/sass/app.scss') --}}
 </head>
 
-<body class="border-top-wide border-primary d-flex flex-column">
+<body>
 
-    <div class="page page-center">
-        <div class="row">
-            <div class="container-tight py-4 col-12 col-md-4 mx-auto">
-                <div class="text-center mb-4">
-                    <a href="{{ config('app.url') }}" class="navbar-brand navbar-brand-autodark">
-                        <img src="{{ url('img/logo.svg') }}" height="36" alt="" />
-                    </a>
-                </div>
-
-                @yield('content')
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+        <div class="col-4">
+            <div class="text-center mb-4">
+                <a href="{{ config('app.url') }}" class="navbar-brand navbar-brand-autodark">
+                    <img src="{{ url('img/logo.svg') }}" height="36" alt="" />
+                </a>
             </div>
+
+            @yield('content')
         </div>
     </div>
 

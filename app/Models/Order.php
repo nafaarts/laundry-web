@@ -13,6 +13,10 @@ class Order extends Model
         'user_id',
         'laundry_id',
         'status',
+        'with_pick_up',
+        'address_id',
+        'lat',
+        'long',
         'is_paid',
         'is_pickedup',
     ];

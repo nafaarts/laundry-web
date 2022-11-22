@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('laundry_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['terima', 'cuci', 'setrika', 'selesai']);
+            $table->enum('status', ['PESANAN_DIBUAT', 'DITERIMA', 'DICUCI', 'SETRIKA', 'SELESAI', 'DIBATALKAN'])->default('PESANAN_DIBUAT');
             $table->boolean('is_paid')->default(false);
             $table->boolean('is_pickedup')->default(false);
             $table->timestamps();

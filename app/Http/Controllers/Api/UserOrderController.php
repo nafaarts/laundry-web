@@ -1,0 +1,110 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Models\Order;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\LaundryService;
+use App\Models\OrderDetail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+class UserOrderController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $user = auth('api')->user();
+        $orders = Order::where('user_id', $user->id)->get();
+
+        return $orders;
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store()
+    {
+        $validator = Validator::make(request()->all(), [
+            'laundry_id' => 'required',
+            'with_pick_up'  => 'required',
+            'detail_order' => 'required',
+            'lat' => 'required',
+            'long' => 'required',
+            'address_id' => Rule::requiredIf(request('with_pick_up') == true)
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Bad Request', 'validation' => $validator->messages()], 400);
+        }
+
+        try {
+            $user = auth('api')->user();
+            $order = Order::create([
+                'user_id' => $user->id,
+                'laundry_id' => request('laundry_id'),
+                'with_pick_up' => request('with_pick_up'),
+                'address_id' => request('address_id') ?? null,
+                'lat' => request('lat'),
+                'long' => request('long'),
+            ]);
+
+            foreach (request('detail_order') as $detail) {
+                $service = LaundryService::findOrFail($detail['service_id']);
+                $order->details()->create([
+                    'service_id' => $service->id,
+                    'weight' => $detail['weight'],
+                    'price' => $service->price * $detail['weight']
+                ]);
+            }
+
+            return response()->json([
+                'messages' => 'new order successfully created!',
+                'order' => $order,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => 'Server Error', 'messages' => $th->getMessage()]);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $user = auth('api')->user();
+        $order = Order::with('details')->where(['id' => $id, 'user_id' => $user->id])->first();
+
+        return $order;
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $user = auth('api')->user();
+        $order = Order::where(['id' => $id, 'user_id' => $user->id])->first();
+
+        $order->update([
+            'status' => 'DIBATALKAN'
+        ]);
+
+        return $order;
+    }
+}

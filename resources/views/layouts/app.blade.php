@@ -2,79 +2,83 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
     <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
-        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    {{-- @vite('resources/sass/app.scss') --}}
     @yield('custom_styles')
+    <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 </head>
 
-<body class="theme-light">
-    <div class="sticky-top bg-white border-bottom">
-        <div class="container">
-            <header class="navbar navbar-expand-md navbar-light sticky-top d-print-none">
-                <div class="container-xl">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#navbar-menu">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                        <a href=".">
-                            <img src="{{ url('img/logo.svg') }}" width="110" height="32" alt="Tabler"
-                                class="navbar-brand-image">
-                        </a>
-                    </h1>
-                    <div class="navbar-nav flex-row order-md-last">
-                        @auth
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
-                                    aria-label="Open user menu">
-                                    <div class="d-none d-xl-block pe-2">
-                                        <i class="fas fa-fw fa-user"></i> {{ auth()->user()->name ?? null }}
-                                    </div>
-                                    {{-- <span class="avatar avatar-sm rounded-circle"
-                                            style="background-image: url(https://eu.ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=206BC4&color=fff)"></span> --}}
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                    <a href="{{ route('profile.show') }}" class="dropdown-item">{{ __('Profile') }}</a>
-                                    <div class="dropdown-divider"></div>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <a href="{{ route('logout') }}" class="dropdown-item"
-                                            onclick="event.preventDefault(); this.closest('form').submit();">
-                                            {{ __('Log Out') }}
-                                        </a>
-                                    </form>
-                                </div>
-                            </div>
-                        @endauth
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-light bg-light">
+        <!-- Navbar Brand-->
+        <a class="navbar-brand ps-3" href="/">
+            <img src="{{ url('img/logo.svg') }}" width="110" height="32" alt="Tabler"
+                class="navbar-brand-image">
+        </a>
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+                class="fas fa-bars"></i></button>
+        <!-- Navbar Search-->
+        <div class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <span>{{ auth()->user()->name }}</span>
+        </div>
+        <!-- Navbar-->
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="{{ route('profile.show') }}">Settings</a></li>
+                    <li><a class="dropdown-item"
+                            onclick="return document.getElementById('logout-form').submit()">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    @include('layouts.navigation')
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    <span class="text-uppercase">{{ auth()->user()->role }}</span>
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid p-4">
+                    @yield('content')
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; E-Laundry {{ date('Y') }}</div>
+                        <div>
+                            <a href="#">Muhammad Chaizir</a>
+                        </div>
                     </div>
                 </div>
-            </header>
-            @include('layouts.navigation')
+            </footer>
         </div>
     </div>
 
-    <div class="container py-3">
-        @yield('content')
-    </div>
-
-    <!-- Core plugin JavaScript-->
-    @vite('resources/js/app.js')
-
-    <!-- Page level custom scripts -->
+    <script src="{{ asset('js/scripts.js') }}"></script>
     @yield('custom_scripts')
-
 </body>
 
 </html>

@@ -16,8 +16,11 @@ class LaundryController extends Controller
      */
     public function index()
     {
-        $laundries = Laundry::paginate();
-        return view('laundry.index', compact('laundries'));
+        if (request()->user()->can('admin')) {
+            $laundries = Laundry::all();
+            return view('laundry.index', compact('laundries'));
+        }
+        return redirect('/');
     }
 
     /**
@@ -61,6 +64,7 @@ class LaundryController extends Controller
             'lat' => $request->lat,
             'long' => $request->long,
             'image' => $image_name,
+            'has_pickup' => $request->has_pickup ?? 0
         ]);
 
         return redirect()->route('laundry.index')->with('success', 'Laundry has been added!');
@@ -74,7 +78,10 @@ class LaundryController extends Controller
      */
     public function show(Laundry $laundry)
     {
-        return view('laundry.detail', compact('laundry'));
+        if (request()->user()->can('admin')) {
+            return view('laundry.detail', compact('laundry'));
+        }
+        return redirect('/');
     }
 
     /**
@@ -123,9 +130,14 @@ class LaundryController extends Controller
             'lat' => $request->lat,
             'long' => $request->long,
             'image' => $image_name ?? $laundry->image,
+            'has_pickup' => $request->has_pickup ?? 0
         ]);
 
-        return redirect()->route('laundry.index')->with('success', 'Laundry successfully updated');
+        if (request()->user()->can('admin')) {
+            return redirect()->route('laundry.index')->with('success', 'Laundry successfully updated');
+        }
+
+        return redirect('/detail')->with('success', 'Laundry successfully updated');
     }
 
     /**

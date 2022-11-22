@@ -3,6 +3,7 @@
 use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserOrderController;
 use App\Models\Laundry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -105,6 +106,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // alamat
     Route::resource('/address', AddressController::class)->only(['index', 'store', 'destroy']);
+
+    Route::resource('/order', UserOrderController::class)->except(['create', 'edit', 'destroy']);
 });
 
 Route::get('/get-nearest-area', function () {

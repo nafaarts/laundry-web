@@ -14,7 +14,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::orderBy('id', 'DESC')->paginate();
+        $orders = Order::latest()->get();
         return view('order.index', compact('orders'));
     }
 
@@ -28,15 +28,4 @@ class OrderController extends Controller
     {
         return view('order.detail', compact('transaction'));
     }
-
-    // /**
-    //  * Remove the specified resource from storage.
-    //  *
-    //  * @param  \App\Models\Order  $order
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function destroy(Order $order)
-    // {
-    //     //
-    // }
 }

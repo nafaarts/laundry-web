@@ -2,21 +2,20 @@
 
 @section('content')
     <div class="container-xl">
-        <div class="page-header">
+        <div class="page-header d-print-none">
             <div class="row align-items-center">
                 <div class="col">
                     <h2 class="page-title">
-                        {{ __('Transactions') }}
+                        {{ __('Orders') }}
                     </h2>
                 </div>
             </div>
         </div>
         <hr>
     </div>
-
     <div class="page-body">
-        <div class="container-xl">
 
+        <div class="container-xl">
             @if ($message = Session::get('success'))
                 <div class="alert alert-success alert-dismissible">
                     <div class="d-flex">
@@ -35,6 +34,8 @@
                     <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
                 </div>
             @endif
+        </div>
+        <div class="container-xl">
 
             <div class="card p-4">
                 <table class="display" id="myTable" width="100%" cellspacing="0">
@@ -76,7 +77,8 @@
                                 </td>
                                 <td class="text-uppercase">{{ $order->status }}</td>
                                 <td>
-                                    <a href="{{ route('orders.show', $order) }}" class="btn btn-sm btn-info text-white">
+                                    <a href="{{ route('laundry-orders.detail', $order) }}"
+                                        class="btn btn-sm btn-info text-white">
                                         <i class="fas fa-fw fa-info-circle"></i>
                                     </a>
                                 </td>

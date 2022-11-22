@@ -27,11 +27,31 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $data['users'] = User::count();
-        $data['laundry'] = Laundry::count();
-        $data['services'] = LaundryService::count();
-        $data['orders'] = Order::count();
+        if (request()->user()->can('admin')) {
+            $data['users'] = User::count();
+            $data['laundry'] = Laundry::count();
+            $data['services'] = LaundryService::count();
+            $data['orders'] = Order::count();
 
-        return view('home', compact('data'));
+            return view('home', compact('data'));
+        }
+
+        $data['costumer'] = Order::where('laundry_id', auth()->user()?->laundry->id)->groupBy('user_id')->count();
+        $data['services'] = auth()->user()->laundry->services()->count() ?? 0;
+        $data['orders'] = Order::where('laundry_id', auth()->user()?->laundry->id)->count();
+        $data['amount'] = Order::where('laundry_id', auth()->user()?->laundry->id)->get()->reduce(function ($total, $item) {
+            return $total += $item->details->reduce(function ($total, $item) {
+                return $total += $item->price;
+            });
+        }, 0);
+
+        return view('user-laundry.dashboard', compact('data'));
+    }
+
+    public function detail()
+    {
+        $laundry = auth()->user()->laundry;
+
+        return view('user-laundry.detail', compact('laundry'));
     }
 }

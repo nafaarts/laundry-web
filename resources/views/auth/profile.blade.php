@@ -6,20 +6,16 @@
         <div class="page-header d-print-none">
             <div class="row align-items-center">
                 <div class="col">
-                    <!-- Page pre-title -->
-                    <div class="page-pretitle">
-                        {{ config('app.name') }}
-                    </div>
                     <h2 class="page-title">
                         {{ __('My profile') }}
                     </h2>
                 </div>
             </div>
         </div>
+        <hr>
     </div>
     <div class="page-body">
         <div class="container-xl">
-
             @if ($message = Session::get('success'))
                 <div class="alert alert-success alert-dismissible">
                     <div class="d-flex">
