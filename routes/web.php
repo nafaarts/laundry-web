@@ -42,3 +42,7 @@ Route::get('open-explore', function () {
     echo "<br>";
     echo "<small>$laundry->name</small>";
 })->name('open.explore');
+
+Route::get('/sample', function () {
+    echo config('app.env');
+});
