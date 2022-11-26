@@ -28,8 +28,8 @@
 
 <body class="position-relative">
 
-    <button id="my-position" class="position-absolute bottom-0 end-0 m-3  text-primary bg-transparent fs-1 border-0"
-        style="z-index: 2">
+    <button id="my-position" class="position-absolute m-3 text-primary bg-transparent fs-1 border-0"
+        style="z-index: 2; bottom: 5px; right: 5px">
         <i class="fas fa-fw fa-crosshairs"></i>
     </button>
 
