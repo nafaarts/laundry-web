@@ -30,7 +30,7 @@
 
     <button id="my-position"
         class="position-absolute bottom-0 end-0 m-3 bg-primary rounded-circle text-white fs-1 d-flex justify-content-center align-items-center border-0"
-        style="height: 40px; width: 40px; z-index: 2">
+        style="height: 45px !important; width: 45px !important; z-index: 2">
         <i class="fas fa-fw fa-crosshairs"></i>
     </button>
 
@@ -40,10 +40,6 @@
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Laundry</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body">
                     <div id="image-field"
                         style="height: 200px; background-size: cover; background-position: center center">
@@ -84,9 +80,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a id="open-explore" class="btn btn-primary w-100">Lihat
-                        Selengkapnya</a>
-                    {{-- <button type="button" class="btn me-auto w-100" data-bs-dismiss="modal">Close</button> --}}
+                    <div class="d-flex w-100">
+                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal"
+                            aria-label="Close">
+                            <i class="fas fa-fw fa-arrow-left"></i></button>
+                        <a id="open-explore" class="ms-2 btn btn-primary flex-grow-1">Lihat
+                            Selengkapnya</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,7 +130,9 @@
 
             console.log(coords);
 
-            map = L.map('map').setView([coords.lat, coords.long], 18);
+            map = L.map('map', {
+                attributionControl: false
+            }).setView([coords.lat, coords.long], 18);
 
             map.options.minZoom = 17;
             map.options.maxZoom = 18;
