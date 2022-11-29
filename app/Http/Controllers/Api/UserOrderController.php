@@ -26,7 +26,7 @@ class UserOrderController extends Controller
             return [
                 "id" => $item->id,
                 "status" => $item->status,
-                "Laundry" => $item->laundry->name,
+                "laundry" => $item->laundry->name,
                 "weight" => $item->getTotalWeight(),
                 "price" => $item->getTotalPrice(),
                 "date_order" => $item->created_at->format('d F Y')
