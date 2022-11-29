@@ -22,9 +22,10 @@ class UserOrderController extends Controller
         $user = auth('api')->user();
         $orders = Order::where('user_id', $user->id)->get();
 
-        $orders = $orders->map(function ($item) {
+        $result = collect($orders)->map(function ($item) {
             return [
-                ...$item,
+                "id" => $item->id,
+                "status" => $item->status,
                 "Laundry" => $item->laundry->name,
                 "weight" => $item->getTotalWeight(),
                 "price" => $item->getTotalPrice(),
@@ -32,7 +33,7 @@ class UserOrderController extends Controller
             ];
         });
 
-        return $orders;
+        return $result;
     }
 
     /**
