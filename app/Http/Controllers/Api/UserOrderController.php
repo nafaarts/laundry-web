@@ -22,6 +22,16 @@ class UserOrderController extends Controller
         $user = auth('api')->user();
         $orders = Order::where('user_id', $user->id)->get();
 
+        $orders = $orders->map(function ($item) {
+            return [
+                ...$item,
+                "Laundry" => $item->laundry->name,
+                "weight" => $item->getTotalWeight(),
+                "price" => $item->getTotalPrice(),
+                "date_order" => $item->created_at->format('d F Y')
+            ];
+        });
+
         return $orders;
     }
 
@@ -102,7 +112,7 @@ class UserOrderController extends Controller
         $order = Order::where(['id' => $id, 'user_id' => $user->id])->first();
 
         $order->update([
-            'status' => 'DIBATALKAN'
+            'status' => request('status')
         ]);
 
         return $order;
