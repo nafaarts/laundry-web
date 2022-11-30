@@ -29,6 +29,7 @@ class UserOrderController extends Controller
                 "laundry" => $item->laundry->name,
                 "weight" => $item->getTotalWeight(),
                 "price" => $item->getTotalPrice(),
+                "is_paid" => $item->is_paid,
                 "date_order" => $item->created_at->format('d F Y')
             ];
         });
@@ -97,7 +98,18 @@ class UserOrderController extends Controller
         $user = auth('api')->user();
         $order = Order::with('details')->where(['id' => $id, 'user_id' => $user->id])->first();
 
-        return $order;
+        return [
+            "id" => $order->id,
+            "date" => $order->created_at->format('d F Y'),
+            "status" => $order->status,
+            "laundry" => $order->laundry->name,
+            "weight" => $order->getTotalWeight(),
+            "price" => $order->getTotalPrice(),
+            "is_paid" => $order->is_paid,
+            "is_pickedup" => $order->is_pickedup,
+            "with_pick_up" => $order->with_pick_up,
+            "address" => $order->address->address ?? null
+        ];
     }
 
     /**

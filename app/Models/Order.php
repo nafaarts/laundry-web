@@ -49,4 +49,9 @@ class Order extends Model
             return $total += $item->weight;
         });
     }
+
+    public function address()
+    {
+        return $this->hasOne(UserAddress::class, 'address_id');
+    }
 }
