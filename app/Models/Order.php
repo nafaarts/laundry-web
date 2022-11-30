@@ -52,6 +52,6 @@ class Order extends Model
 
     public function address()
     {
-        return $this->hasOne(UserAddress::class, 'address_id');
+        return $this->belongsTo(UserAddress::class);
     }
 }
